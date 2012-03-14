@@ -1,3 +1,6 @@
+#include <functional>
+#include <numeric>
+
 template<uint8_t POLYNOMIAL>
 CRC8<POLYNOMIAL>& CRC8<POLYNOMIAL>::instance()
 {
@@ -5,6 +8,15 @@ CRC8<POLYNOMIAL>& CRC8<POLYNOMIAL>::instance()
   return singleton;
 }
 
+template<uint8_t POLYNOMIAL> template<typename InputIterator>
+uint8_t CRC8<POLYNOMIAL>::calculate (InputIterator first, InputIterator last)
+{
+
+  return std::accumulate (first, last, 0, crc8_calculator (_lut));
+}
+
+
+/*
 template<uint8_t POLYNOMIAL>
 uint8_t CRC8<POLYNOMIAL>::calculate (uint8_t* data, size_t length)
 {
@@ -16,6 +28,7 @@ uint8_t CRC8<POLYNOMIAL>::calculate (uint8_t* data, size_t length)
 
   return rval;
 }
+*/
 
 template<uint8_t POLYNOMIAL>
 CRC8<POLYNOMIAL>::CRC8()
