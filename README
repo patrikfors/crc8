@@ -1,0 +1,1 @@
+Implementation of crc-8 (x^8+x^7+x^6+x^4+x^2+1) in C and C++.
