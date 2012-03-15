@@ -1,29 +1,33 @@
 #include <iomanip>
 #include <iostream>
+#include <vector>
 using namespace std;
 
 #include "crc8.h"
+#include "hex_output.h"
+
 typedef CRC8<0xd5> crc8;
 
 int main (void)
 {
+  crc8& crc = crc8::instance();
 
   // test with a dead babe
-  uint32_t x = 0xbebaadde;
-  uint8_t* data = (uint8_t*) &x;
-  uint32_t x2 = 0xdeadbabe;
-  uint8_t* data2 = (uint8_t*) &x2;
+  uint32_t x = 0xdeadbabe;
+  std::cout << "deadbabe crc=" << hex (2) <<
+            (int) crc.calculate_running (0, x) << std::endl;
 
-  // template singleton version
-  crc8& crc = crc8::instance();
-  typedef reverse_iterator<const uint8_t*> rit;
+  // test with stdin
+  uint8_t checksum = 0;
 
-  /*
-  uint8_t running_crc=0;
-  for(rit i=rit(data2+4);i!=rit(data2);i++)
-    running_crc=crc.calculate(running_crc, *i);
-  cout << "rcrc=0x" << hex << setw (2) << setfill ('0') << (int) running_crc << endl;
-  */
-  cout << "xxxx=0x" << hex << setw (2) << setfill ('0') << (int) crc.calculate (data, data + 4) << endl;
-
+  std::vector<char> v;
+  char input = 0;
+  while (std::cin.get (input)) {
+    v.push_back (input);
+    checksum = crc.calculate_running (checksum, input);
+    std::cout << "checksum: " << hex (2) <<
+              (int) checksum << std::endl;
+  }
+  std::cout << "checksum(v): " << hex (2) <<
+            (int) crc.calculate (v.begin(), v.end()) << std::endl;
 }
